@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/sameerdewan/eth-arbitrum-poe/issues"
   },
-  "homepage": "https://github.com/sameerdewan/eth-arbitrum-poe#readme"
+  "homepage": "https://github.com/sameerdewan/eth-arbitrum-poe#readme",
+  "devDependencies": {
+    "hardhat": "^2.3.0"
+  }
 }
