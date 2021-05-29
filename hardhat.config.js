@@ -1,6 +1,7 @@
 require("@nomiclabs/hardhat-ethers");
 require("@nomiclabs/hardhat-waffle");
 require("solidity-coverage");
+require('hardhat-abi-exporter');
 
 // config based on
 // https://github.com/Uniswap/uniswap-v3-core/blob/main/hardhat.config.ts
@@ -24,6 +25,12 @@ module.exports = {
     kovan: {
       url: `https://kovan.infura.io/v3/${process.env.INFURA_API_KEY}`,
     },
+  },
+  abiExporter: {
+    path: './abi',
+    clear: true,
+    flat: true,
+    spacing: 2
   },
   solidity: {
     version: '0.7.6',
