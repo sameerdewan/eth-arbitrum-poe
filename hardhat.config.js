@@ -1,5 +1,6 @@
 require("@nomiclabs/hardhat-ethers");
 require("@nomiclabs/hardhat-waffle");
+require("solidity-coverage");
 
 // config based on
 // https://github.com/Uniswap/uniswap-v3-core/blob/main/hardhat.config.ts
