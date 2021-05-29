@@ -10,7 +10,7 @@ contract PoE {
     bytes32 hashValue;
     bool exists;
     uint blockTimestamp;
-    string message;
+    string URI;
     address signer;
   }
 
@@ -20,7 +20,7 @@ contract PoE {
 
   constructor() {}
 
-  event RecordCreated(bytes32 indexed _hashValue, string indexed message, address indexed signer);
+  event RecordCreated(bytes32 indexed _hashValue, string indexed URI, address indexed signer);
 
   modifier doesNotExistAlready(bytes32 _hashValue) {
       (, bool exists,) = this.get(_hashValue);
@@ -40,7 +40,7 @@ contract PoE {
       hashValue: _hashValue,
       exists: true,
       blockTimestamp: block.timestamp,
-      message: "N/A",
+      URI: "N/A",
       signer: address(this)
     });
     records.push(_hashValue);
@@ -56,26 +56,26 @@ contract PoE {
       hashValue: _hashValue,
       exists: true,
       blockTimestamp: block.timestamp,
-      message: "N/A",
+      URI: "N/A",
       signer: signer
     });
     records.push(_hashValue);
     emit RecordCreated(_hashValue, "N/A", address(this));
   }
 
-  function post(bytes32 _hashValue, string memory message) external doesNotExistAlready(_hashValue)  {
+  function post(bytes32 _hashValue, string memory URI) external doesNotExistAlready(_hashValue)  {
     hashValueToRecord[_hashValue] = Record({
       hashValue: _hashValue,
       exists: true,
       blockTimestamp: block.timestamp,
-      message: message,
+      URI: URI,
       signer: address(this)
     });
     records.push(_hashValue);
-    emit RecordCreated(_hashValue, message, address(this));
+    emit RecordCreated(_hashValue, URI, address(this));
   }
 
-  function post(bytes32 _hashValue, string memory message, bool sign) external doesNotExistAlready(_hashValue)  {
+  function post(bytes32 _hashValue, string memory URI, bool sign) external doesNotExistAlready(_hashValue)  {
     address signer = address(this);
     if (sign == true) {
       signer = msg.sender;
@@ -84,10 +84,10 @@ contract PoE {
       hashValue: _hashValue,
       exists: true,
       blockTimestamp: block.timestamp,
-      message: message,
+      URI: URI,
       signer: signer
     });
     records.push(_hashValue);
-    emit RecordCreated(_hashValue, message, address(this));
+    emit RecordCreated(_hashValue, URI, address(this));
   }
 }
