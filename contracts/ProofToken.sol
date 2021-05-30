@@ -28,6 +28,21 @@ contract ProofToken is ERC721URIStorage {
         _;
     }
 
+    function mintProofToken(bytes32 _hashValue) external doesNotExist(_hashValue) {
+        _tokenIds.increment();
+        uint256 _tokenId = _tokenIds.current();
+        _mint(msg.sender, _tokenId);
+        _setTokenURI(_tokenId, "");
+        uint256 blockTimestamp = block.timestamp;
+        proofs[_hashValue] = Proof({
+            hashValue: _hashValue,
+            URIHash: "",
+            exists: true,
+            blockTimestamp: blockTimestamp
+        });
+        emit ProofTokenMinted(_hashValue, "", blockTimestamp);
+    }
+
     function mintProofToken(bytes32 _hashValue, bytes32 _URIHash, string memory _URI) external doesNotExist(_hashValue) {
         _tokenIds.increment();
         uint256 _tokenId = _tokenIds.current();
