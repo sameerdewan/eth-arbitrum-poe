@@ -27,7 +27,7 @@ async function mintProofToken(fileAsBuffer) {
 }
 ```
 
-_Example 2B: All three parameters provided (hashValue, URIHash, URI), but attaching an X12 EDI formatted basic invoice as the URI parameter, storing it on chain in the tokenURI field for the ERC721_
+_Example 2B: All three parameters provided (hashValue, URIHash, URI), but attaching an [X12 EDI formatted basic invoice](https://x12.org/examples/004010x348/example-1-basic-invoice) as the URI parameter, storing it on chain in the tokenURI field for the ERC721_
 ```javascript
 async function mintProofToken(fileAsBuffer) {
     const hashValue = sha256(fileAsBuffer);
@@ -38,4 +38,23 @@ async function mintProofToken(fileAsBuffer) {
     await Contract.methods.mintProofToken(...args).send({ from });
 }
 ```
-Source: https://x12.org/examples/004010x348/example-1-basic-invoice
+
+The ProofToken contract inherits from the [ERC721URIStorage](https://docs.openzeppelin.com/contracts/4.x/api/token/erc721#ERC721URIStorage ) OpenZeppelin contract. The burnable function is thus inherited, however, is overridden in the contract to both burn the token and remove it from contract state as an existing hash. The overridden burnable function is still only callable by the owner of the token.
+
+The ProofToken NFT itself does not need to be owned to validate the existence of a proof on chain. The existence of a proof can be checked by calling the contract method `get()` with the bytes32 hashValue of the item to be validated, returning __true__ for proof of existence found, and __false__ for not found.
+
+_Example 3: Validating a hash (proof)_
+```javascript
+async function main(hashProof) {
+    const exists = await Contract.methods.get(hashProof).call();
+    if (exists) {
+        alert('Proof of existence validated!');
+    } else {
+        alert('Proof of existence could not be found.');
+    }
+}
+```
+
+Proof tokens act as records in themselves of a proof of existence of a given item. Given that guessing the correct input of a SHA-256 hash is around one in quattuorvigintillion (78 digit number), the combined ownership of a token and earliest blockchain persisted record _could_ serve to act as a representive tokenized version of the underlying item.
+
+With that being said, the significance and use of the ProofToken contract, this repository, and the ProofToken NFTs themselves, is open to the end user.
