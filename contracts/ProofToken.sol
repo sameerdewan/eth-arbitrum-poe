@@ -24,6 +24,7 @@ contract ProofToken is ERC721URIStorage {
     constructor() ERC721("ProofToken", "PROOF") {}
 
     event ProofTokenMinted(bytes32 indexed hashValue, bytes32 indexed URIHash, uint256 blockTimestamp);
+    event ProofTokenBurned(bytes32 indexed hashValue, bytes32 indexed URIHash, uint256 blockTimestamp);
 
     modifier doesNotExist(bytes32 _hashValue) {
         require(proofs[_hashValue].exists == false, "Proof with hash already exists");
@@ -70,13 +71,14 @@ contract ProofToken is ERC721URIStorage {
 
     function _burn(uint256 tokenId) internal virtual override {
         super._burn(tokenId);
-
         if (bytes(_tokenURIs[tokenId]).length != 0) {
             delete _tokenURIs[tokenId];
         }
-        if (_idToProofs[tokenId].exists == true) {
+        Proof memory proof = _idToProofs[tokenId];
+        if (proof.exists == true) {
             delete _idToProofs[tokenId];
-            delete proofs[_idToProofs[tokenId].hashValue];
+            delete proofs[proof.hashValue];
         }
+        emit ProofTokenBurned(proof.hashValue, proof.URIHash, block.timestamp);
     }
 }
