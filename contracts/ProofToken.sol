@@ -17,6 +17,8 @@ contract ProofToken is ERC721URIStorage {
         uint256 blockTimestamp;
     }
 
+    mapping(uint256 => string) private _tokenURIs;
+    mapping(uint256 => Proof) private _idToProofs;
     mapping(bytes32 => Proof) public proofs;
 
     constructor() ERC721("ProofToken", "PROOF") {}
@@ -38,12 +40,14 @@ contract ProofToken is ERC721URIStorage {
         _mint(msg.sender, _tokenId);
         _setTokenURI(_tokenId, "");
         uint256 blockTimestamp = block.timestamp;
-        proofs[_hashValue] = Proof({
+        Proof memory proof = Proof({
             hashValue: _hashValue,
             URIHash: "",
             exists: true,
             blockTimestamp: blockTimestamp
         });
+        proofs[_hashValue] = proof;
+        _idToProofs[_tokenId] = proof;
         emit ProofTokenMinted(_hashValue, "", blockTimestamp);
     }
 
@@ -53,12 +57,26 @@ contract ProofToken is ERC721URIStorage {
         _mint(msg.sender, _tokenId);
         _setTokenURI(_tokenId, _URI);
         uint256 blockTimestamp = block.timestamp;
-        proofs[_hashValue] = Proof({
+        Proof memory proof = Proof({
             hashValue: _hashValue,
             URIHash: _URIHash,
             exists: true,
             blockTimestamp: blockTimestamp
         });
+        proofs[_hashValue] = proof;
+        _idToProofs[_tokenId] = proof;
         emit ProofTokenMinted(_hashValue, _URIHash, blockTimestamp);
+    }
+
+    function _burn(uint256 tokenId) internal virtual override {
+        super._burn(tokenId);
+
+        if (bytes(_tokenURIs[tokenId]).length != 0) {
+            delete _tokenURIs[tokenId];
+        }
+        if (_idToProofs[tokenId].exists == true) {
+            delete _idToProofs[tokenId];
+            delete proofs[_idToProofs[tokenId].hashValue];
+        }
     }
 }
